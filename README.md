@@ -1,32 +1,85 @@
-# React + TypeScript + Vite
+# 🎵 Lofi Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A calculator that doesn't feel like a calculator. Built with a chill lofi aesthetic — animated dusk background, ambient music, soft neon buttons, and a set of genuinely useful financial tools underneath the vibe.
 
-Currently, two official plugins are available:
+**Live demo → [lofi-calculator.vercel.app](https://lofi-calculator.vercel.app)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+<!-- SCREENSHOT: add a screenshot of the app here later -->
+<!-- ![Lofi Calculator screenshot](./screenshot.png) -->
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features
 
-## Expanding the Oxlint configuration
+- **Basic mode** — standard arithmetic plus scientific functions (√, x², 1/x, π)
+- **Financial mode** — Time Value of Money solver: enter any four of N, I/Y, PV, PMT, FV and compute the fifth
+- **Cash Flow mode** — NPV and IRR calculation from an editable list of cash flows
+- **Lofi music player** — built-in ambient tracks with play/pause, next/previous, and volume control
+- **Click sounds** — tactile button feedback, with a global mute toggle
+- **Light / Dark mode** — switch between a soft daytime palette and a neon night theme
+- **Animated background** — a living dusk-to-night scene with moon, hills, and stars
+- **Keyboard support** — type numbers and operators directly
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+---
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 🛠️ Tech Stack
+
+- **React** — UI library
+- **TypeScript** — type-safe components and calculation logic
+- **Vite** — build tool and dev server
+- **Tailwind CSS v4** — styling
+- **Framer Motion** — animations
+
+Deployed on **Vercel**.
+
+---
+
+## 🚀 Running Locally
+
+```bash
+# clone the repository
+git clone https://github.com/Pansony67/lofi-calculator.git
+cd lofi-calculator
+
+# install dependencies
+npm install
+
+# start the dev server
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Then open the local URL shown in your terminal (usually `http://localhost:5173`).
+
+To build for production:
+
+```bash
+npm run build
+```
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── component/calculator/   # Calculator UI, keypad, display, music player, contact links
+├── hooks/                  # useCalculator, useFinancial, useClickSound
+├── utils/                  # calculation logic (basic, financial, sound settings)
+└── assets/pages/           # animated lofi background
+```
+
+---
+
+## 🎧 Credits
+
+- Music and sound effects sourced from [Pixabay](https://pixabay.com) (royalty-free)
+
+---
+
+## 👤 Author
+
+**Pannadhorn Rugseree**
+
+- GitHub — [@Pansony67](https://github.com/Pansony67)
+- LinkedIn — [Pannadhorn Rugseree](https://www.linkedin.com/in/pannadhorn-rugseree-90a8b6403/)
+- Email — Pansony67@gmail.com
