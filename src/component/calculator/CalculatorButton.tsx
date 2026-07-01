@@ -1,4 +1,4 @@
-// src/components/calculator/CalculatorButton.tsx
+// src/component/calculator/CalculatorButton.tsx
 import { useClickSound } from "../../hooks/useClickSound";
 
 type ButtonVariant = "number" | "operator" | "function" | "scientific" | "equals";
@@ -40,7 +40,7 @@ export function CalculatorButton({
         onClick();
         event.currentTarget.blur();
       }}
-      className={`flex h-[72px] items-center justify-center rounded-xl text-2xl font-medium tracking-wide transition-all duration-200 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${VARIANT_STYLES[variant]}`}
+      className={`flex h-[52px] sm:h-[64px] lg:h-[72px] items-center justify-center rounded-xl text-xl sm:text-2xl font-medium tracking-wide transition-all duration-200 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${VARIANT_STYLES[variant]}`}
     >
       {label}
     </button>

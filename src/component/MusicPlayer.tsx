@@ -1,4 +1,4 @@
-// src/component/calculator/LofiPlayer.tsx
+// src/component/calculator/MusicPlayer.tsx
 import { useEffect, useRef, useState } from "react";
 
 // the 3 songs you put in public/music
@@ -8,11 +8,27 @@ const TRACKS = [
   { name: "Lofi Track 3", src: "/music/song3.mp3" },
 ];
 
+// custom hook: true when the screen is phone-sized (< 640px)
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
+  useEffect(() => {
+    function onResize() {
+      setIsMobile(window.innerWidth < 640);
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return isMobile;
+}
+
 export function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [trackIndex, setTrackIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
+  const isMobile = useIsMobile();
 
   // keep the audio element's volume in sync with the slider
   useEffect(() => {
@@ -49,9 +65,28 @@ export function MusicPlayer() {
     setTrackIndex((i) => (i - 1 + TRACKS.length) % TRACKS.length);
   }
 
-  return (
-    <div
-      style={{
+  // on desktop: floating fixed bottom-left. on mobile: static, centered, sits in normal flow.
+  const wrapStyle: React.CSSProperties = isMobile
+    ? {
+        position: "static",
+        margin: "16px auto 0",
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexWrap: "wrap",
+        gap: "12px",
+        padding: "10px 16px",
+        borderRadius: "999px",
+        background: "rgba(20,12,30,.75)",
+        border: "1px solid rgba(167,139,250,.35)",
+        backdropFilter: "blur(8px)",
+        boxShadow: "0 4px 20px rgba(0,0,0,.4)",
+        color: "#e9ddff",
+        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+        fontSize: "13px",
+      }
+    : {
         position: "fixed",
         bottom: "18px",
         left: "18px",
@@ -68,8 +103,10 @@ export function MusicPlayer() {
         color: "#e9ddff",
         fontFamily: "'JetBrains Mono', ui-monospace, monospace",
         fontSize: "13px",
-      }}
-    >
+      };
+
+  return (
+    <div style={wrapStyle}>
       {/* the actual audio element. when a track ends, go to the next one. */}
       <audio ref={audioRef} src={TRACKS[trackIndex].src} onEnded={nextTrack} />
 

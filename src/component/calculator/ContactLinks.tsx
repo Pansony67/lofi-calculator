@@ -1,4 +1,5 @@
 // src/component/calculator/ContactLinks.tsx
+import { useEffect, useState } from "react";
 
 const LINKS = [
   { label: "GitHub", href: "https://github.com/Pansony67" },
@@ -6,20 +7,51 @@ const LINKS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/pannadhorn-rugseree-90a8b6403/" },
 ];
 
+// custom hook: true when the screen is phone-sized (< 640px)
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
+  useEffect(() => {
+    function onResize() {
+      setIsMobile(window.innerWidth < 640);
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return isMobile;
+}
+
 export function ContactLinks() {
-  const wrap = {
-    position: "fixed" as const,
-    bottom: "18px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 20,
-    display: "flex",
-    alignItems: "center",
-    gap: "14px",
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-    fontSize: "13px",
-    letterSpacing: ".03em",
-  };
+  const isMobile = useIsMobile();
+
+  // on desktop: floating fixed bottom-center. on mobile: static, sits below the player in normal flow.
+  const wrap: React.CSSProperties = isMobile
+    ? {
+        position: "static",
+        margin: "12px auto 20px",
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "14px",
+        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+        fontSize: "13px",
+        letterSpacing: ".03em",
+      }
+    : {
+        position: "fixed",
+        bottom: "18px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        gap: "14px",
+        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+        fontSize: "13px",
+        letterSpacing: ".03em",
+      };
 
   const linkStyle = {
     color: "rgba(233,221,255,.7)",

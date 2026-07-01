@@ -1,4 +1,4 @@
-// src/components/calculator/Calculator.tsx
+// src/component/calculator/Calculator.tsx
 import { useEffect, useState } from "react";
 import { FinancialCalculator } from "./FinancialCalculator";
 import { CashFlowCalculator } from "./CashFlowCalculator";
@@ -32,12 +32,10 @@ export function Calculator() {
 
   return (
     <div className="relative" style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
-      {/* ambient bloom behind the calculator */}
       <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[2.5rem] bg-violet-400/20 blur-3xl dark:bg-violet-600/20" />
 
-      <div className="w-[480px] max-w-[92vw] rounded-2xl border border-violet-300 bg-violet-100/90 p-8 shadow-[0_0_40px_rgba(167,139,250,0.4)] backdrop-blur-xl dark:border-violet-500/30 dark:bg-[#0d0a18]/95 dark:shadow-[0_0_40px_rgba(124,58,237,0.25)]">
-        {/* VSCode-style title bar */}
-        <div className="mb-4 flex items-center justify-between px-1">
+      <div className="w-[480px] max-w-[92vw] rounded-2xl border border-violet-300 bg-violet-100/90 p-4 sm:p-6 lg:p-8 shadow-[0_0_40px_rgba(167,139,250,0.4)] backdrop-blur-xl dark:border-violet-500/30 dark:bg-[#0d0a18]/95 dark:shadow-[0_0_40px_rgba(124,58,237,0.25)]">
+        <div className="mb-3 sm:mb-4 flex items-center justify-between px-1">
           <div className="flex gap-2">
             <span className="h-3 w-3 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
             <span className="h-3 w-3 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" />
@@ -46,8 +44,7 @@ export function Calculator() {
           <span className="text-xs text-violet-500/70 dark:text-violet-400/60">calc.tsx</span>
         </div>
 
-        {/* tab toggle */}
-        <div className="mb-4 flex gap-1.5 rounded-xl border border-violet-300 bg-violet-50/60 p-1 dark:border-violet-500/20 dark:bg-black/30">
+        <div className="mb-3 sm:mb-4 flex gap-1.5 rounded-xl border border-violet-300 bg-violet-50/60 p-1 dark:border-violet-500/20 dark:bg-black/30">
           <button
             type="button"
             onClick={() => setMode("basic")}
@@ -107,8 +104,7 @@ export function Calculator() {
           <CashFlowCalculator />
         )}
 
-        {/* bottom neon hairline */}
-        <div className="mt-4 h-px w-full bg-gradient-to-r from-violet-500/0 via-violet-400/70 to-fuchsia-500/0" />
+        <div className="mt-3 sm:mt-4 h-px w-full bg-gradient-to-r from-violet-500/0 via-violet-400/70 to-fuchsia-500/0" />
       </div>
     </div>
   );

@@ -24,9 +24,25 @@ const KEYFRAMES = `
 }
 `;
 
+// true when the screen is phone-sized (< 640px)
+function useIsMobileBg() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
+  useEffect(() => {
+    function onResize() {
+      setIsMobile(window.innerWidth < 640);
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return isMobile;
+}
+
 export default function LofiBackground() {
   const [dark, setDark] = useState(false);
   const [muted, setMutedState] = useState(isMuted());
+  const isMobile = useIsMobileBg();
 
   useEffect(() => {
     try {
@@ -289,28 +305,28 @@ export default function LofiBackground() {
           setMutedState(next);
         }}
         style={{
-          position: "absolute",
-          top: "62px",
-          right: "18px",
-          zIndex: 10,
+          position: "fixed",
+          top: isMobile ? "52px" : "62px",
+          right: isMobile ? "10px" : "18px",
+          zIndex: 40,
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          padding: "9px 16px",
+          padding: isMobile ? "7px 12px" : "9px 16px",
           borderRadius: "999px",
           border: `1px solid ${dark ? "rgba(255,238,200,.9)" : "rgba(255,246,224,.35)"}`,
           background: dark ? "rgba(255,238,200,.92)" : "rgba(30,18,44,.55)",
           color: dark ? "#1a1020" : "#fff6e0",
           backdropFilter: "blur(6px)",
           fontFamily: "'Julius Sans One', sans-serif",
-          fontSize: "13px",
+          fontSize: isMobile ? "11px" : "13px",
           letterSpacing: ".04em",
           cursor: "pointer",
           boxShadow: "0 2px 14px rgba(0,0,0,.3)",
           transition: "background .4s ease, color .4s ease, border-color .4s ease",
         }}
       >
-        <span style={{ fontSize: "15px" }}>{muted ? "\u{1F507}" : "\u{1F50A}"}</span>
+        <span style={{ fontSize: isMobile ? "13px" : "15px" }}>{muted ? "\u{1F507}" : "\u{1F50A}"}</span>
         <span>{muted ? "Muted" : "Sound"}</span>
       </button>
 
@@ -318,30 +334,31 @@ export default function LofiBackground() {
       <button
         onClick={toggle}
         style={{
-          position: "absolute",
-          top: "18px",
-          right: "18px",
-          zIndex: 10,
+          position: "fixed",
+          top: isMobile ? "12px" : "18px",
+          right: isMobile ? "10px" : "18px",
+          zIndex: 40,
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          padding: "9px 16px",
+          padding: isMobile ? "7px 12px" : "9px 16px",
           borderRadius: "999px",
           border: `1px solid ${dark ? "rgba(255,238,200,.9)" : "rgba(255,246,224,.35)"}`,
           background: dark ? "rgba(255,238,200,.92)" : "rgba(30,18,44,.55)",
           color: dark ? "#1a1020" : "#fff6e0",
           backdropFilter: "blur(6px)",
           fontFamily: "'Julius Sans One', sans-serif",
-          fontSize: "13px",
+          fontSize: isMobile ? "11px" : "13px",
           letterSpacing: ".04em",
           cursor: "pointer",
           boxShadow: "0 2px 14px rgba(0,0,0,.3)",
           transition: "background .4s ease, color .4s ease, border-color .4s ease",
         }}
       >
-        <span style={{ fontSize: "15px" }}>{dark ? "\u2600" : "\u263e"}</span>
+        <span style={{ fontSize: isMobile ? "13px" : "15px" }}>{dark ? "\u2600" : "\u263e"}</span>
         <span>{dark ? "Light" : "Dark"}</span>
       </button>
     </div>
   );
 }
+

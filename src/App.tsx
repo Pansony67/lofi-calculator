@@ -8,13 +8,23 @@ import { ContactLinks } from "./component/calculator/ContactLinks";
 
 function App() {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen">
       <LofiBackground />
-       <MusicPlayer />
-       <ContactLinks />
-      <main className="pointer-events-none relative z-10 flex min-h-screen items-center justify-center">
-        <div className="pointer-events-auto">
-          <Calculator />
+
+      {/* Desktop: player + links float via fixed positioning (rendered here).
+          Mobile: they render in normal flow below the calculator instead — see the mobile block. */}
+      <div className="hidden sm:block">
+        <MusicPlayer />
+        <ContactLinks />
+      </div>
+
+      <main className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8">
+        <Calculator />
+
+        {/* Mobile only: player + links stack under the calculator, in normal flow */}
+        <div className="w-full max-w-[92vw] sm:hidden">
+          <MusicPlayer />
+          <ContactLinks />
         </div>
       </main>
     </div>
