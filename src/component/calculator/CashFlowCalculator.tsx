@@ -1,14 +1,34 @@
 // src/components/calculator/CashFlowCalculator.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalculatorButton } from "./CalculatorButton";
 import { solveNPV, solveIRR, formatMoney } from "../../utils/financialUtils";
 
+// load saved cash-flow data (if any) from localStorage
+function loadSavedCF() {
+  try {
+    const raw = localStorage.getItem("lofi-calc-cashflow");
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
 export function CashFlowCalculator() {
+   const saved = loadSavedCF();
   // list of cash flow amounts (as strings while typing). Start with CF0 and CF1.
-  const [flows, setFlows] = useState<string[]>(["-1000", "0"]);
-  const [rate, setRate] = useState("10"); // discount rate for NPV
-  const [result, setResult] = useState<string>("—");
-  const [resultLabel, setResultLabel] = useState("Result");
+  const [flows, setFlows] = useState<string[]>(saved?.flows ?? ["-1000", "0"]);
+  const [rate, setRate] = useState<string>(saved?.rate ?? "10"); // discount rate for NPV
+  const [result, setResult] = useState<string>(saved?.result ?? "—");
+  const [resultLabel, setResultLabel] = useState<string>(saved?.resultLabel ?? "Result");
+
+    // save cash-flow data whenever flows or rate change
+  useEffect(() => {
+    try {
+       localStorage.setItem(
+        "lofi-calc-cashflow",
+        JSON.stringify({ flows, rate, result, resultLabel })
+      );
+    } catch {}
+  }, [flows, rate, result, resultLabel]);
 
   function updateFlow(index: number, value: string) {
     setFlows((f) => f.map((item, i) => (i === index ? value : item)));

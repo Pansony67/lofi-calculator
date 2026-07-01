@@ -1,5 +1,5 @@
 // src/hooks/useFinancial.ts
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   solveFV,
   solvePV,
@@ -13,11 +13,32 @@ type TvmKey = "n" | "iy" | "pv" | "pmt" | "fv";
 
 const EMPTY: TvmValues = { n: null, iy: null, pv: null, pmt: null, fv: null };
 
+// load saved financial values (if any) from localStorage
+function loadSavedFin() {
+  try {
+    const raw = localStorage.getItem("lofi-calc-financial");
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
 export function useFinancial() {
-  const [values, setValues] = useState<TvmValues>(EMPTY);
-  const [entry, setEntry] = useState("0");   // the number being typed
+  const saved = loadSavedFin();
+  const [values, setValues] = useState<TvmValues>(saved?.values ?? EMPTY);
+  const [entry, setEntry] = useState<string>(saved?.entry ?? "0");   // the number being typed
   const [computeMode, setComputeMode] = useState(false); // true after CPT is pressed
   const [message, setMessage] = useState("Enter 4 values, then CPT + the unknown");
+
+
+  // save financial values whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "lofi-calc-financial",
+        JSON.stringify({ values, entry })
+      );
+    } catch {}
+  }, [values, entry]);
 
   function inputDigit(digit: string) {
     setComputeMode(false);

@@ -10,7 +10,21 @@ import type { Operator } from "../../utils/calculatorUtils";
 
 export function Calculator() {
   const calc = useCalculator();
-  const [mode, setMode] = useState<"basic" | "financial" | "cashflow">("basic");
+ const [mode, setMode] = useState<"basic" | "financial" | "cashflow">(() => {
+    try {
+      const saved = localStorage.getItem("lofi-calc-mode");
+      if (saved === "basic" || saved === "financial" || saved === "cashflow") {
+        return saved;
+      }
+    } catch {}
+    return "basic";
+  });
+
+    useEffect(() => {
+    try {
+      localStorage.setItem("lofi-calc-mode", mode);
+    } catch {}
+  }, [mode]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
