@@ -1,4 +1,4 @@
-// src/components/calculator/CashFlowCalculator.tsx
+// src/component/calculator/CashFlowCalculator.tsx
 import { useState, useEffect } from "react";
 import { CalculatorButton } from "./CalculatorButton";
 import { solveNPV, solveIRR, formatMoney } from "../../utils/financialUtils";
@@ -12,23 +12,32 @@ function loadSavedCF() {
   return null;
 }
 
+// what kind of result we're currently explaining
+type Explain =
+  | { kind: "none" }
+  | { kind: "npv"; value: number; rate: number }
+  | { kind: "irr"; value: number; rate: number }
+  | { kind: "irr-none" };
+
 export function CashFlowCalculator() {
-   const saved = loadSavedCF();
+  const saved = loadSavedCF();
   // list of cash flow amounts (as strings while typing). Start with CF0 and CF1.
   const [flows, setFlows] = useState<string[]>(saved?.flows ?? ["-1000", "0"]);
   const [rate, setRate] = useState<string>(saved?.rate ?? "10"); // discount rate for NPV
   const [result, setResult] = useState<string>(saved?.result ?? "—");
   const [resultLabel, setResultLabel] = useState<string>(saved?.resultLabel ?? "Result");
+  const [explain, setExplain] = useState<Explain>(saved?.explain ?? { kind: "none" });
+  const [lang, setLang] = useState<"th" | "en">(saved?.lang ?? "th");
 
-    // save cash-flow data whenever flows or rate change
+  // save cash-flow data whenever it changes
   useEffect(() => {
     try {
-       localStorage.setItem(
+      localStorage.setItem(
         "lofi-calc-cashflow",
-        JSON.stringify({ flows, rate, result, resultLabel })
+        JSON.stringify({ flows, rate, result, resultLabel, explain, lang })
       );
     } catch {}
-  }, [flows, rate, result, resultLabel]);
+  }, [flows, rate, result, resultLabel, explain, lang]);
 
   function updateFlow(index: number, value: string) {
     setFlows((f) => f.map((item, i) => (i === index ? value : item)));
@@ -48,6 +57,7 @@ export function CashFlowCalculator() {
     setRate("10");
     setResult("—");
     setResultLabel("Result");
+    setExplain({ kind: "none" });
   }
 
   // turn the string inputs into numbers (blank = 0)
@@ -59,14 +69,112 @@ export function CashFlowCalculator() {
     const r = parseFloat(rate) || 0;
     const value = solveNPV(r, asNumbers());
     setResultLabel(`NPV at ${r}%`);
-    setResult(Number.isFinite(value) ? formatMoney(value) : "Error");
+    if (Number.isFinite(value)) {
+      setResult(formatMoney(value));
+      setExplain({ kind: "npv", value, rate: r });
+    } else {
+      setResult("Error");
+      setExplain({ kind: "none" });
+    }
   }
 
   function computeIRR() {
+    const r = parseFloat(rate) || 0;
     const value = solveIRR(asNumbers());
     setResultLabel("IRR");
-    setResult(Number.isFinite(value) ? formatMoney(value) + " %" : "No solution");
+    if (Number.isFinite(value)) {
+      setResult(formatMoney(value) + " %");
+      setExplain({ kind: "irr", value, rate: r });
+    } else {
+      setResult("No solution");
+      setExplain({ kind: "irr-none" });
+    }
   }
+
+  // build the explanation text based on the last result + language
+  function explanation(): { emoji: string; title: string; body: string } | null {
+    if (explain.kind === "none") return null;
+
+    if (explain.kind === "npv") {
+      const { value } = explain;
+      if (value > 0.005) {
+        return lang === "th"
+          ? {
+              emoji: "✅",
+              title: "โครงการนี้คุ้มค่า",
+              body: `NPV เป็นบวก (${formatMoney(value)}) แปลว่าโครงการสร้างมูลค่าเพิ่มเหนือต้นทุนเงินทุนที่ ${explain.rate}% โดยทั่วไป NPV > 0 = น่าลงทุน`,
+            }
+          : {
+              emoji: "✅",
+              title: "This project adds value",
+              body: `A positive NPV (${formatMoney(value)}) means the project earns more than your ${explain.rate}% cost of capital. Generally, NPV > 0 = worth investing.`,
+            };
+      }
+      if (value < -0.005) {
+        return lang === "th"
+          ? {
+              emoji: "⚠️",
+              title: "โครงการนี้ยังไม่คุ้ม",
+              body: `NPV เป็นลบ (${formatMoney(value)}) แปลว่าผลตอบแทนต่ำกว่าต้นทุนเงินทุนที่ ${explain.rate}% โดยทั่วไป NPV < 0 = ควรพิจารณาใหม่`,
+            }
+          : {
+              emoji: "⚠️",
+              title: "This project falls short",
+              body: `A negative NPV (${formatMoney(value)}) means returns are below your ${explain.rate}% cost of capital. Generally, NPV < 0 = reconsider.`,
+            };
+      }
+      return lang === "th"
+        ? {
+            emoji: "➖",
+            title: "จุดคุ้มทุนพอดี",
+            body: `NPV ≈ 0 แปลว่าโครงการให้ผลตอบแทนเท่ากับ rate ที่ตั้งไว้ (${explain.rate}%) พอดี ไม่กำไรไม่ขาดทุนเชิงมูลค่า`,
+          }
+        : {
+            emoji: "➖",
+            title: "Exactly break-even",
+            body: `NPV ≈ 0 means the project returns exactly your ${explain.rate}% rate — no value gained or lost.`,
+          };
+    }
+
+    if (explain.kind === "irr") {
+      const { value, rate: r } = explain;
+      const beats = value > r;
+      return lang === "th"
+        ? {
+            emoji: beats ? "✅" : "⚠️",
+            title: beats ? "IRR สูงกว่า rate ที่ต้องการ" : "IRR ต่ำกว่า rate ที่ต้องการ",
+            body: `IRR คือผลตอบแทนที่แท้จริงของโครงการ (${formatMoney(value)}%) ${
+              beats
+                ? `ซึ่งสูงกว่า rate ที่ต้องการ (${r}%) → น่าลงทุน`
+                : `ซึ่งต่ำกว่า rate ที่ต้องการ (${r}%) → ยังไม่น่าลงทุน`
+            }`,
+          }
+        : {
+            emoji: beats ? "✅" : "⚠️",
+            title: beats ? "IRR beats your target rate" : "IRR is below your target rate",
+            body: `IRR is the project's true rate of return (${formatMoney(value)}%). ${
+              beats
+                ? `It's higher than your ${r}% target → worth investing.`
+                : `It's lower than your ${r}% target → not worth it yet.`
+            }`,
+          };
+    }
+
+    // irr-none
+    return lang === "th"
+      ? {
+          emoji: "🤔",
+          title: "หา IRR ไม่ได้",
+          body: "IRR หาค่าไม่ได้ มักเกิดเมื่อกระแสเงินสดไม่มีการสลับเครื่องหมาย (เช่น ไม่มีเงินลงทุนติดลบตอนแรก) ลองตรวจ CF0 ว่าเป็นค่าติดลบ",
+        }
+      : {
+          emoji: "🤔",
+          title: "No IRR found",
+          body: "IRR can't be solved — usually when cash flows never change sign (e.g. no initial negative investment). Check that CF0 is negative.",
+        };
+  }
+
+  const exp = explanation();
 
   return (
     <div>
@@ -131,6 +239,29 @@ export function CashFlowCalculator() {
           {result}
         </div>
       </div>
+
+      {/* explanation box (unique feature: explains what the number means) */}
+      {exp && (
+        <div className="mb-4 rounded-xl border border-violet-400/40 bg-violet-100/70 px-4 py-3 dark:border-violet-500/30 dark:bg-violet-950/30">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="flex items-center gap-2 text-sm font-semibold text-violet-800 dark:text-violet-200">
+              <span>{exp.emoji}</span>
+              {exp.title}
+            </span>
+            {/* TH / EN language toggle */}
+            <button
+              type="button"
+              onClick={() => setLang((l) => (l === "th" ? "en" : "th"))}
+              className="rounded-md border border-violet-400/50 px-2 py-0.5 text-xs font-medium text-violet-600 hover:bg-violet-200/50 dark:text-violet-300 dark:hover:bg-violet-500/10"
+            >
+              {lang === "th" ? "EN" : "TH"}
+            </button>
+          </div>
+          <p className="text-xs leading-relaxed text-violet-700/90 dark:text-violet-300/80">
+            {exp.body}
+          </p>
+        </div>
+      )}
 
       {/* action buttons */}
       <div className="grid grid-cols-3 gap-3">
