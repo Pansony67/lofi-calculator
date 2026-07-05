@@ -41,9 +41,8 @@ export function ContactLinks() {
       }
     : {
         position: "fixed",
-        bottom: "18px",
-        left: "50%",
-        transform: "translateX(-50%)",
+        top: "18px",
+        left: "18px",
         zIndex: 20,
         display: "flex",
         alignItems: "center",
@@ -52,6 +51,7 @@ export function ContactLinks() {
         fontSize: "13px",
         letterSpacing: ".03em",
       };
+      
 
   const linkStyle = {
     color: "rgba(233,221,255,.7)",

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { CalculatorButton } from "./CalculatorButton";
 import { solveNPV, solveIRR, formatMoney } from "../../utils/financialUtils";
+import { BarChart, Bar, XAxis, YAxis, Cell, ResponsiveContainer, ReferenceLine, Tooltip } from "recharts";
 
 // load saved cash-flow data (if any) from localStorage
 function loadSavedCF() {
@@ -12,7 +13,6 @@ function loadSavedCF() {
   return null;
 }
 
-// what kind of result we're currently explaining
 type Explain =
   | { kind: "none" }
   | { kind: "npv"; value: number; rate: number }
@@ -21,15 +21,13 @@ type Explain =
 
 export function CashFlowCalculator() {
   const saved = loadSavedCF();
-  // list of cash flow amounts (as strings while typing). Start with CF0 and CF1.
   const [flows, setFlows] = useState<string[]>(saved?.flows ?? ["-1000", "0"]);
-  const [rate, setRate] = useState<string>(saved?.rate ?? "10"); // discount rate for NPV
+  const [rate, setRate] = useState<string>(saved?.rate ?? "10");
   const [result, setResult] = useState<string>(saved?.result ?? "—");
   const [resultLabel, setResultLabel] = useState<string>(saved?.resultLabel ?? "Result");
   const [explain, setExplain] = useState<Explain>(saved?.explain ?? { kind: "none" });
   const [lang, setLang] = useState<"th" | "en">(saved?.lang ?? "th");
 
-  // save cash-flow data whenever it changes
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -48,7 +46,7 @@ export function CashFlowCalculator() {
   }
 
   function removeFlow(index: number) {
-    if (flows.length <= 2) return; // keep at least CF0 + CF1
+    if (flows.length <= 2) return;
     setFlows((f) => f.filter((_, i) => i !== index));
   }
 
@@ -60,7 +58,6 @@ export function CashFlowCalculator() {
     setExplain({ kind: "none" });
   }
 
-  // turn the string inputs into numbers (blank = 0)
   function asNumbers(): number[] {
     return flows.map((f) => parseFloat(f) || 0);
   }
@@ -91,7 +88,6 @@ export function CashFlowCalculator() {
     }
   }
 
-  // build the explanation text based on the last result + language
   function explanation(): { emoji: string; title: string; body: string } | null {
     if (explain.kind === "none") return null;
 
@@ -99,82 +95,40 @@ export function CashFlowCalculator() {
       const { value } = explain;
       if (value > 0.005) {
         return lang === "th"
-          ? {
-              emoji: "✅",
-              title: "โครงการนี้คุ้มค่า",
-              body: `NPV เป็นบวก (${formatMoney(value)}) แปลว่าโครงการสร้างมูลค่าเพิ่มเหนือต้นทุนเงินทุนที่ ${explain.rate}% โดยทั่วไป NPV > 0 = น่าลงทุน`,
-            }
-          : {
-              emoji: "✅",
-              title: "This project adds value",
-              body: `A positive NPV (${formatMoney(value)}) means the project earns more than your ${explain.rate}% cost of capital. Generally, NPV > 0 = worth investing.`,
-            };
+          ? { emoji: "✅", title: "โครงการนี้คุ้มค่า", body: `NPV เป็นบวก (${formatMoney(value)}) แปลว่าโครงการสร้างมูลค่าเพิ่มเหนือต้นทุนเงินทุนที่ ${explain.rate}% โดยทั่วไป NPV > 0 = น่าลงทุน` }
+          : { emoji: "✅", title: "This project adds value", body: `A positive NPV (${formatMoney(value)}) means the project earns more than your ${explain.rate}% cost of capital. Generally, NPV > 0 = worth investing.` };
       }
       if (value < -0.005) {
         return lang === "th"
-          ? {
-              emoji: "⚠️",
-              title: "โครงการนี้ยังไม่คุ้ม",
-              body: `NPV เป็นลบ (${formatMoney(value)}) แปลว่าผลตอบแทนต่ำกว่าต้นทุนเงินทุนที่ ${explain.rate}% โดยทั่วไป NPV < 0 = ควรพิจารณาใหม่`,
-            }
-          : {
-              emoji: "⚠️",
-              title: "This project falls short",
-              body: `A negative NPV (${formatMoney(value)}) means returns are below your ${explain.rate}% cost of capital. Generally, NPV < 0 = reconsider.`,
-            };
+          ? { emoji: "⚠️", title: "โครงการนี้ยังไม่คุ้ม", body: `NPV เป็นลบ (${formatMoney(value)}) แปลว่าผลตอบแทนต่ำกว่าต้นทุนเงินทุนที่ ${explain.rate}% โดยทั่วไป NPV < 0 = ควรพิจารณาใหม่` }
+          : { emoji: "⚠️", title: "This project falls short", body: `A negative NPV (${formatMoney(value)}) means returns are below your ${explain.rate}% cost of capital. Generally, NPV < 0 = reconsider.` };
       }
       return lang === "th"
-        ? {
-            emoji: "➖",
-            title: "จุดคุ้มทุนพอดี",
-            body: `NPV ≈ 0 แปลว่าโครงการให้ผลตอบแทนเท่ากับ rate ที่ตั้งไว้ (${explain.rate}%) พอดี ไม่กำไรไม่ขาดทุนเชิงมูลค่า`,
-          }
-        : {
-            emoji: "➖",
-            title: "Exactly break-even",
-            body: `NPV ≈ 0 means the project returns exactly your ${explain.rate}% rate — no value gained or lost.`,
-          };
+        ? { emoji: "➖", title: "จุดคุ้มทุนพอดี", body: `NPV ≈ 0 แปลว่าโครงการให้ผลตอบแทนเท่ากับ rate ที่ตั้งไว้ (${explain.rate}%) พอดี ไม่กำไรไม่ขาดทุนเชิงมูลค่า` }
+        : { emoji: "➖", title: "Exactly break-even", body: `NPV ≈ 0 means the project returns exactly your ${explain.rate}% rate — no value gained or lost.` };
     }
 
     if (explain.kind === "irr") {
       const { value, rate: r } = explain;
       const beats = value > r;
       return lang === "th"
-        ? {
-            emoji: beats ? "✅" : "⚠️",
-            title: beats ? "IRR สูงกว่า rate ที่ต้องการ" : "IRR ต่ำกว่า rate ที่ต้องการ",
-            body: `IRR คือผลตอบแทนที่แท้จริงของโครงการ (${formatMoney(value)}%) ${
-              beats
-                ? `ซึ่งสูงกว่า rate ที่ต้องการ (${r}%) → น่าลงทุน`
-                : `ซึ่งต่ำกว่า rate ที่ต้องการ (${r}%) → ยังไม่น่าลงทุน`
-            }`,
-          }
-        : {
-            emoji: beats ? "✅" : "⚠️",
-            title: beats ? "IRR beats your target rate" : "IRR is below your target rate",
-            body: `IRR is the project's true rate of return (${formatMoney(value)}%). ${
-              beats
-                ? `It's higher than your ${r}% target → worth investing.`
-                : `It's lower than your ${r}% target → not worth it yet.`
-            }`,
-          };
+        ? { emoji: beats ? "✅" : "⚠️", title: beats ? "IRR สูงกว่า rate ที่ต้องการ" : "IRR ต่ำกว่า rate ที่ต้องการ", body: `IRR คือผลตอบแทนที่แท้จริงของโครงการ (${formatMoney(value)}%) ${beats ? `ซึ่งสูงกว่า rate ที่ต้องการ (${r}%) → น่าลงทุน` : `ซึ่งต่ำกว่า rate ที่ต้องการ (${r}%) → ยังไม่น่าลงทุน`}` }
+        : { emoji: beats ? "✅" : "⚠️", title: beats ? "IRR beats your target rate" : "IRR is below your target rate", body: `IRR is the project's true rate of return (${formatMoney(value)}%). ${beats ? `It's higher than your ${r}% target → worth investing.` : `It's lower than your ${r}% target → not worth it yet.`}` };
     }
 
-    // irr-none
     return lang === "th"
-      ? {
-          emoji: "🤔",
-          title: "หา IRR ไม่ได้",
-          body: "IRR หาค่าไม่ได้ มักเกิดเมื่อกระแสเงินสดไม่มีการสลับเครื่องหมาย (เช่น ไม่มีเงินลงทุนติดลบตอนแรก) ลองตรวจ CF0 ว่าเป็นค่าติดลบ",
-        }
-      : {
-          emoji: "🤔",
-          title: "No IRR found",
-          body: "IRR can't be solved — usually when cash flows never change sign (e.g. no initial negative investment). Check that CF0 is negative.",
-        };
+      ? { emoji: "🤔", title: "หา IRR ไม่ได้", body: "IRR หาค่าไม่ได้ มักเกิดเมื่อกระแสเงินสดไม่มีการสลับเครื่องหมาย (เช่น ไม่มีเงินลงทุนติดลบตอนแรก) ลองตรวจ CF0 ว่าเป็นค่าติดลบ" }
+      : { emoji: "🤔", title: "No IRR found", body: "IRR can't be solved — usually when cash flows never change sign (e.g. no initial negative investment). Check that CF0 is negative." };
   }
 
   const exp = explanation();
+
+  // data for the chart — one bar per cash flow
+  const chartData = flows.map((f, i) => ({
+    name: `CF${i}`,
+    value: parseFloat(f) || 0,
+  }));
+  const hasChartData = chartData.some((d) => d.value !== 0);
 
   return (
     <div>
@@ -229,6 +183,53 @@ export function CashFlowCalculator() {
         + Add cash flow
       </button>
 
+      {/* cash flow chart (unique feature: see the money flow) */}
+      {hasChartData && (
+        <div className="mb-4 rounded-xl border border-violet-300 bg-violet-50/80 px-3 py-3 dark:border-violet-500/20 dark:bg-black/40">
+          <div className="mb-2 px-1 text-xs font-semibold text-violet-600 dark:text-violet-400/80">
+            {lang === "th" ? "กระแสเงินสดแต่ละงวด" : "Cash flow by period"}
+          </div>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 11, fill: "#a78bfa" }}
+                axisLine={{ stroke: "rgba(167,139,250,.3)" }}
+                tickLine={false}
+              />
+              <YAxis hide />
+              <ReferenceLine y={0} stroke="rgba(167,139,250,.5)" />
+              <Tooltip
+                cursor={{ fill: "rgba(167,139,250,.1)" }}
+                contentStyle={{
+                  background: "rgba(20,12,30,.95)",
+                  border: "1px solid rgba(167,139,250,.4)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  color: "#e9ddff",
+                }}
+                formatter={(v) => [formatMoney(Number(v)), lang === "th" ? "จำนวน" : "Amount"]}
+              />
+              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                {chartData.map((entry, i) => (
+                  <Cell key={i} fill={entry.value >= 0 ? "#a78bfa" : "#f472b6"} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="mt-1 flex justify-center gap-4 text-[10px] text-violet-500/70 dark:text-violet-400/60">
+            <span className="flex items-center gap-1">
+              <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#a78bfa" }} />
+              {lang === "th" ? "เงินเข้า" : "Inflow"}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#f472b6" }} />
+              {lang === "th" ? "เงินออก" : "Outflow"}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* result display */}
       <div className="mb-4 rounded-xl border border-violet-300 bg-violet-50/80 px-5 py-4 text-right dark:border-violet-500/20 dark:bg-black/40">
         <div className="text-xs text-violet-500/70 dark:text-violet-400/70">{resultLabel}</div>
@@ -240,7 +241,7 @@ export function CashFlowCalculator() {
         </div>
       </div>
 
-      {/* explanation box (unique feature: explains what the number means) */}
+      {/* explanation box */}
       {exp && (
         <div className="mb-4 rounded-xl border border-violet-400/40 bg-violet-100/70 px-4 py-3 dark:border-violet-500/30 dark:bg-violet-950/30">
           <div className="mb-1 flex items-center justify-between">
@@ -248,7 +249,6 @@ export function CashFlowCalculator() {
               <span>{exp.emoji}</span>
               {exp.title}
             </span>
-            {/* TH / EN language toggle */}
             <button
               type="button"
               onClick={() => setLang((l) => (l === "th" ? "en" : "th"))}
