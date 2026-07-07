@@ -1,11 +1,17 @@
 // src/component/calculator/MusicPlayer.tsx
 import { useEffect, useRef, useState } from "react";
 
-// the 3 songs you put in public/music
+// song1-3 live in public/music, song4-9 live in public/Song (capital S)
 const TRACKS = [
   { name: "Lofi Track 1", src: "/music/song1.mp3" },
   { name: "Lofi Track 2", src: "/music/song2.mp3" },
   { name: "Lofi Track 3", src: "/music/song3.mp3" },
+  { name: "Lofi Track 4", src: "/Song/song4.mp3" },
+  { name: "Lofi Track 5", src: "/Song/song5.mp3" },
+  { name: "Lofi Track 6", src: "/Song/song6.mp3" },
+  { name: "Lofi Track 7", src: "/Song/song7.mp3" },
+  { name: "Lofi Track 8", src: "/Song/song8.mp3" },
+  { name: "Lofi Track 9", src: "/Song/song9.mp3" },
 ];
 
 // custom hook: true when the screen is phone-sized (< 640px)
@@ -28,12 +34,18 @@ export function MusicPlayer() {
   const [trackIndex, setTrackIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
+  const [loop, setLoop] = useState(false); // repeat the current track
   const isMobile = useIsMobile();
 
   // keep the audio element's volume in sync with the slider
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
+
+  // keep the audio element's loop flag in sync
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.loop = loop;
+  }, [loop]);
 
   // when the track changes, load it and (if we were playing) keep playing
   useEffect(() => {
@@ -63,6 +75,11 @@ export function MusicPlayer() {
 
   function prevTrack() {
     setTrackIndex((i) => (i - 1 + TRACKS.length) % TRACKS.length);
+  }
+
+  // when a track ends: if looping, the <audio loop> handles it; otherwise go next
+  function handleEnded() {
+    if (!loop) nextTrack();
   }
 
   // on desktop: floating fixed bottom-left. on mobile: static, centered, sits in normal flow.
@@ -107,8 +124,8 @@ export function MusicPlayer() {
 
   return (
     <div style={wrapStyle}>
-      {/* the actual audio element. when a track ends, go to the next one. */}
-      <audio ref={audioRef} src={TRACKS[trackIndex].src} onEnded={nextTrack} />
+      {/* the actual audio element */}
+      <audio ref={audioRef} src={TRACKS[trackIndex].src} onEnded={handleEnded} />
 
       {/* previous */}
       <button onClick={prevTrack} style={btnStyle} aria-label="Previous track">
@@ -123,6 +140,19 @@ export function MusicPlayer() {
       {/* next */}
       <button onClick={nextTrack} style={btnStyle} aria-label="Next track">
         {"\u23ED"}
+      </button>
+
+      {/* loop / repeat toggle */}
+      <button
+        onClick={() => setLoop((l) => !l)}
+        style={{
+          ...btnStyle,
+          color: loop ? "#c4b5fd" : "rgba(233,221,255,.45)",
+        }}
+        aria-label="Repeat current track"
+        title={loop ? "Repeat: on" : "Repeat: off"}
+      >
+        {"\u{1F501}"}
       </button>
 
       {/* track name */}
