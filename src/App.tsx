@@ -5,6 +5,7 @@ import { Calculator } from "./component/calculator/Calculator";
 import "./App.css";
 import { MusicPlayer } from "./component/MusicPlayer";
 import { ContactLinks } from "./component/calculator/ContactLinks";
+import { Analytics } from "@vercel/analytics/react";
 
 
 function App() {
@@ -32,6 +33,8 @@ function App() {
           <ContactLinks />
         </div>
       </main>
+
+      <Analytics />
     </div>
   );
 }
