@@ -6,6 +6,7 @@ import "./App.css";
 import { MusicPlayer } from "./component/MusicPlayer";
 import { ContactLinks } from "./component/calculator/ContactLinks";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 
 function App() {
@@ -35,6 +36,8 @@ function App() {
       </main>
 
       <Analytics />
+
+      <SpeedInsights />
     </div>
   );
 }
