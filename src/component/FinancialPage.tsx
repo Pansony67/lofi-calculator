@@ -1,4 +1,4 @@
-﻿// src/component/FinancialPage.tsx
+// src/component/FinancialPage.tsx
 import { useEffect, useState } from "react";
 
 /**

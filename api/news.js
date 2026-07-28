@@ -1,4 +1,4 @@
-﻿// api/news.js
+// api/news.js
 //
 // Runs on Vercel as a serverless function. The Finnhub API key lives in
 // process.env here, on the server, so it never reaches the browser.

@@ -1,4 +1,4 @@
-﻿// src/component/HomePage.tsx
+// src/component/HomePage.tsx
 import { Link } from "react-router-dom";
 
 /**

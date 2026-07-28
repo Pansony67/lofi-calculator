@@ -1,4 +1,4 @@
-﻿// src/component/Navbar.tsx
+// src/component/Navbar.tsx
 import type { CSSProperties } from "react";
 import { NavLink } from "react-router-dom";
 import BackgroundPicker from "../assets/pages/skins/BackgroundPicker";

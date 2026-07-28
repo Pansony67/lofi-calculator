@@ -1,4 +1,4 @@
-﻿// src/component/ConverterPage.tsx
+// src/component/ConverterPage.tsx
 import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 

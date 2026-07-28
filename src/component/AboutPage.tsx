@@ -1,4 +1,4 @@
-﻿// src/component/AboutPage.tsx
+// src/component/AboutPage.tsx
 
 /**
  * About page: one card explaining what this project is and who made it.

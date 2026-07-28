@@ -1,4 +1,4 @@
-﻿// src/component/ContactPage.tsx
+// src/component/ContactPage.tsx
 
 /**
  * Contact page: one card, three circles (GitHub / Instagram / LinkedIn).
