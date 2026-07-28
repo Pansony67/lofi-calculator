@@ -17,8 +17,8 @@ export default function BackgroundPicker({
 }: BackgroundPickerProps) {
   const panelStyle: CSSProperties = {
     position: "fixed",
-    top: isMobile ? "132px" : "142px",
-    right: isMobile ? "10px" : "18px",
+    top: "72px",
+    right: isMobile ? "10px" : "20px",
     zIndex: 41,
     width: isMobile ? "220px" : "280px",
     padding: "12px",
