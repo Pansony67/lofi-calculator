@@ -15,6 +15,7 @@ import { isMuted, setMuted } from "./utils/soundSettings";
 import { SKINS, DEFAULT_SKIN_ID } from "./assets/pages/skins/skinConfig";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Seo } from "./seo/Seo";
 
 const SKIN_STORAGE_KEY = "lofi-bg-skin";
 const DARK_STORAGE_KEY = "lofi-bg-mode";
@@ -96,6 +97,11 @@ function App() {
           underneath it. pointer-events-none lets clicks pass through the
           full-screen main to reach the navbar controls in the background
           layer. pointer-events-auto re-enables clicks on real content. */}
+      {/* Rewrites <title>, the description and the schema.org block on
+          every navigation. Outside <Routes> on purpose, like the
+          background and the player - it only needs the path. */}
+      <Seo />
+
       <main className="pointer-events-none relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8 pt-24">
         <div className="pointer-events-auto">
           <Routes>
