@@ -11,23 +11,23 @@ export type Faq = { q: string; a: string };
 
 export const CALCULATOR_FAQ: Faq[] = [
   {
-    q: "NPV คืออะไร",
-    a: "NPV (Net Present Value) หรือมูลค่าปัจจุบันสุทธิ คือการดึงกระแสเงินสดที่จะได้รับในอนาคตทั้งหมดกลับมาคิดเป็นมูลค่า ณ วันนี้ แล้วหักด้วยเงินลงทุนตั้งต้น ถ้า NPV เป็นบวก แปลว่าโครงการสร้างมูลค่าเพิ่มเหนือต้นทุนเงินทุนที่ใช้",
+    q: "What is NPV?",
+    a: "NPV, or net present value, takes every cash flow a project will pay out in the future, converts each one back into what it is worth today using a discount rate, and subtracts the money you put in at the start. A positive NPV means the project creates value above the cost of the capital funding it.",
   },
   {
-    q: "IRR คืออะไร",
-    a: "IRR (Internal Rate of Return) หรืออัตราผลตอบแทนภายใน คืออัตราคิดลดที่ทำให้ NPV เท่ากับศูนย์พอดี พูดง่าย ๆ คือผลตอบแทนต่อปีที่โครงการให้จริง ถ้า IRR สูงกว่าต้นทุนเงินทุนที่เราต้องการ ก็ถือว่าน่าลงทุน",
+    q: "What is IRR?",
+    a: "IRR, or internal rate of return, is the discount rate at which NPV comes out to exactly zero. Read it as the annual return the project actually earns. If the IRR clears the minimum return you are willing to accept, the project passes that test.",
   },
   {
-    q: "NPV กับ IRR ต่างกันอย่างไร ควรเชื่อตัวไหน",
-    a: "NPV ตอบเป็นจำนวนเงิน ส่วน IRR ตอบเป็นเปอร์เซ็นต์ เวลาสองโครงการให้คำตอบขัดกัน ให้ยึด NPV เป็นหลัก เพราะมันบอกมูลค่าที่เพิ่มขึ้นจริงเป็นตัวเงิน ขณะที่ IRR เป็นอัตราส่วนที่ไม่ได้บอกขนาดของโครงการ",
+    q: "What is the difference between NPV and IRR, and which one should I trust?",
+    a: "NPV answers in money, IRR answers in percent. When two projects disagree, follow NPV: it tells you how much value is actually added, while IRR is a ratio that says nothing about the size of the project. A 40% return on a tiny project can be worth less than a 12% return on a large one.",
   },
   {
-    q: "ควรใส่ discount rate เท่าไหร่",
-    a: "ใช้ต้นทุนเงินทุนของโครงการนั้น ถ้าเป็นการลงทุนส่วนตัวมักใช้ผลตอบแทนที่คาดหวังจากทางเลือกอื่นที่ความเสี่ยงใกล้เคียงกัน ถ้าเป็นบริษัทมักใช้ WACC ยิ่งโครงการเสี่ยงมาก อัตราที่ใส่ก็ควรสูงขึ้นตาม",
+    q: "What discount rate should I use?",
+    a: "Use the cost of the capital behind the project. For a personal investment that usually means the return you could get elsewhere at similar risk; for a company it is normally the weighted average cost of capital. The riskier the project, the higher the rate should be.",
   },
   {
-    q: "ทำไมเครื่องคิดเลขหา IRR ไม่ได้",
-    a: "IRR จะหาค่าได้ก็ต่อเมื่อกระแสเงินสดมีการสลับเครื่องหมายอย่างน้อยหนึ่งครั้ง ถ้าทุกงวดเป็นบวกหมดหรือลบหมดจะไม่มีคำตอบ กรณีที่พบบ่อยที่สุดคือลืมใส่เงินลงทุนตั้งต้น (CF0) เป็นค่าติดลบ",
+    q: "Why can't the calculator find an IRR?",
+    a: "IRR only has a solution when the cash flows change sign at least once. If every period is positive, or every period is negative, there is no rate that makes NPV zero. The usual cause is forgetting to enter the initial investment (CF0) as a negative number.",
   },
 ];

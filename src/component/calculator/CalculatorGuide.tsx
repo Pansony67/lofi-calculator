@@ -8,11 +8,7 @@
  * use - the FAQ block in particular is visible on purpose, because the
  * FAQPage structured data in src/seo/pageMeta.ts mirrors it and Google
  * requires the questions to be on the page.
- *
- * Thai first: that is what the calculator itself speaks, and the Thai
- * queries are the ones worth competing for.
  */
-
 import { CALCULATOR_FAQ } from "../../data/calculatorFaq";
 
 function Section({
@@ -36,58 +32,67 @@ function Section({
 
 export function CalculatorGuide() {
   return (
-    <article
-      lang="th"
-      className="w-[720px] max-w-[92vw] rounded-2xl border border-violet-300 bg-violet-100/80 p-6 backdrop-blur-xl sm:p-8 dark:border-violet-500/30 dark:bg-[#0d0a18]/90"
-    >
+    <article className="w-[720px] max-w-[92vw] rounded-2xl border border-violet-300 bg-violet-100/80 p-6 backdrop-blur-xl sm:p-8 dark:border-violet-500/30 dark:bg-[#0d0a18]/90">
       <h2 className="text-xl font-semibold text-violet-900 dark:text-violet-100">
-        NPV และ IRR คืออะไร อ่านผลลัพธ์อย่างไร
+        What NPV and IRR mean, and how to read your result
       </h2>
 
-      <Section title="NPV - มูลค่าปัจจุบันสุทธิ">
+      <Section title="NPV - net present value">
         <p>
-          เงินหนึ่งบาทวันนี้มีค่ามากกว่าเงินหนึ่งบาทในอีกห้าปีข้างหน้า เพราะเงินวันนี้เอาไปลงทุนต่อได้
-          NPV คือการดึงกระแสเงินสดที่จะได้รับในอนาคตทุกงวดกลับมาเป็นมูลค่าวันนี้ด้วยอัตราคิดลด
-          แล้วหักด้วยเงินลงทุนตั้งต้น
+          A dollar today is worth more than a dollar five years from now,
+          because today&apos;s dollar can be put to work in the meantime. NPV
+          takes every future cash flow, discounts each one back to what it is
+          worth today, and subtracts the money you invested at the start.
         </p>
         <p className="font-mono text-xs text-violet-800 dark:text-violet-300">
           NPV = CF1/(1+r) + CF2/(1+r)^2 + ... + CFn/(1+r)^n - CF0
         </p>
         <ul className="list-disc space-y-1 pl-5">
-          <li>NPV มากกว่า 0 - โครงการสร้างมูลค่าเพิ่ม น่าลงทุน</li>
-          <li>NPV น้อยกว่า 0 - ผลตอบแทนไม่คุ้มต้นทุนเงินทุน</li>
-          <li>NPV เท่ากับ 0 - คุ้มทุนพอดีที่อัตราที่ตั้งไว้</li>
+          <li>NPV above 0 - the project adds value; worth doing</li>
+          <li>NPV below 0 - the return does not cover the cost of capital</li>
+          <li>NPV at 0 - it breaks even exactly at the rate you set</li>
         </ul>
       </Section>
 
-      <Section title="IRR - อัตราผลตอบแทนภายใน">
+      <Section title="IRR - internal rate of return">
         <p>
-          IRR คืออัตราคิดลดที่ทำให้ NPV เท่ากับศูนย์ มองอีกมุมคือผลตอบแทนต่อปีที่โครงการให้จริง
-          วิธีใช้คือเอาไปเทียบกับอัตราผลตอบแทนขั้นต่ำที่เรายอมรับได้ ถ้า IRR สูงกว่า ก็ผ่าน
+          IRR is the discount rate that drives NPV to zero. Another way to see
+          it: the annual return the project actually earns. You use it by
+          comparing it against the lowest return you are willing to accept - if
+          the IRR clears that bar, the project passes.
         </p>
         <p>
-          ข้อควรระวัง: ถ้ากระแสเงินสดสลับเครื่องหมายหลายครั้ง โครงการหนึ่งอาจมี IRR ได้หลายค่า
-          กรณีแบบนั้นให้ตัดสินใจด้วย NPV แทน
+          One caveat: when the cash flows change sign more than once, a single
+          project can have several valid IRRs. In that situation, decide on NPV
+          instead.
         </p>
       </Section>
 
-      <Section title="ตัวอย่างจริง">
+      <Section title="A worked example">
         <p>
-          ลงทุน 100,000 บาทวันนี้ แล้วได้เงินคืนปีละ 30,000 บาท เป็นเวลา 5 ปี
-          ที่อัตราคิดลด 8% ต่อปี
+          Invest 100,000 today, then collect 30,000 a year for five years, at a
+          discount rate of 8% a year.
         </p>
         <ul className="list-disc space-y-1 pl-5">
-          <li>มูลค่าปัจจุบันของเงินที่ได้คืนทั้งหมด ประมาณ 119,781 บาท</li>
-          <li>NPV = 119,781 - 100,000 = ประมาณ 19,781 บาท ซึ่งเป็นบวก จึงน่าลงทุน</li>
-          <li>IRR ของกระแสเงินสดชุดนี้อยู่ที่ประมาณ 15.2% ต่อปี สูงกว่า 8% ที่ตั้งไว้</li>
+          <li>
+            The five payments are worth roughly 119,781 in today&apos;s money
+          </li>
+          <li>
+            NPV = 119,781 - 100,000 = about 19,781, which is positive, so the
+            project is worth taking
+          </li>
+          <li>
+            The IRR of that cash flow works out to roughly 15.2% a year,
+            comfortably above the 8% required
+          </li>
         </ul>
         <p>
-          ลองพิมพ์ตัวเลขชุดนี้ลงในโหมด Cash flow ด้านบนดูได้ CF0 ใส่เป็น -100000
-          แล้วตามด้วย 30000 อีกห้างวด
+          Type it into the Cash flow mode above to see it: enter -100000 as CF0,
+          then 30000 five times.
         </p>
       </Section>
 
-      <Section title="คำถามที่พบบ่อย">
+      <Section title="Frequently asked questions">
         <dl className="space-y-4">
           {CALCULATOR_FAQ.map((item) => (
             <div key={item.q}>

@@ -50,7 +50,7 @@ export function Calculator() {
       {/* The page had no heading at all. Visually the calculator speaks
           for itself, so this stays off-screen - but a page with no h1
           gives a crawler nothing to anchor on. */}
-      <h1 className="sr-only">เครื่องคิดเลข NPV และ IRR ออนไลน์ - Lofi Calculator</h1>
+      <h1 className="sr-only">NPV and IRR Calculator Online - Lofi Calculator</h1>
 
     <div className="relative" style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
       <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[2.5rem] bg-violet-400/20 blur-3xl dark:bg-violet-600/20" />
