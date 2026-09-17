@@ -5,6 +5,7 @@ import { CashFlowCalculator } from "./CashFlowCalculator";
 
 import { useCalculator } from "../../hooks/useCalculator";
 import { CalculatorDisplay } from "./CalculatorDisplay";
+import { CalculatorGuide } from "./CalculatorGuide";
 import { CalculatorKeypad } from "./CalculatorKeypad";
 import type { Operator } from "../../utils/calculatorUtils";
 
@@ -45,6 +46,12 @@ export function Calculator() {
   }, [calc]);
 
   return (
+    <div className="flex flex-col items-center gap-10">
+      {/* The page had no heading at all. Visually the calculator speaks
+          for itself, so this stays off-screen - but a page with no h1
+          gives a crawler nothing to anchor on. */}
+      <h1 className="sr-only">เครื่องคิดเลข NPV และ IRR ออนไลน์ - Lofi Calculator</h1>
+
     <div className="relative" style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
       <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[2.5rem] bg-violet-400/20 blur-3xl dark:bg-violet-600/20" />
 
@@ -120,6 +127,9 @@ export function Calculator() {
 
         <div className="mt-3 sm:mt-4 h-px w-full bg-gradient-to-r from-violet-500/0 via-violet-400/70 to-fuchsia-500/0" />
       </div>
+    </div>
+
+      <CalculatorGuide />
     </div>
   );
 }

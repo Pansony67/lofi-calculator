@@ -12,6 +12,8 @@
  * contenders, and the app already explains its results in Thai.
  */
 
+import { CALCULATOR_FAQ } from "../data/calculatorFaq";
+
 export const SITE_URL = "https://lofi-calculator.vercel.app";
 export const SITE_NAME = "Lofi Calculator";
 
@@ -85,6 +87,24 @@ function breadcrumb(name: string, path: string): Record<string, unknown> {
   };
 }
 
+/**
+ * FAQPage, built from the very list the page renders. Google only shows
+ * these as a rich result when the questions are visible to the reader,
+ * which is why the source list lives in src/data/calculatorFaq.ts and
+ * both the page and this file read from it.
+ */
+function faqPage(): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: CALCULATOR_FAQ.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}
+
 const PAGES: Record<string, PageMeta> = {
   "/": {
     title: "Lofi Calculator - เครื่องคิดเลขการเงิน NPV IRR และ TVM ฟรี",
@@ -96,7 +116,7 @@ const PAGES: Record<string, PageMeta> = {
     title: "เครื่องคิดเลข NPV และ IRR ออนไลน์ - Lofi Calculator",
     description:
       "คำนวณ NPV, IRR และกระแสเงินสดออนไลน์ได้ฟรี พร้อมกราฟและคำอธิบายว่าตัวเลขที่ได้หมายความว่าอะไร ไม่ต้องติดตั้งโปรแกรม",
-    jsonLd: [webApplication, breadcrumb("Calculator", "/calculator")],
+    jsonLd: [webApplication, breadcrumb("Calculator", "/calculator"), faqPage()],
   },
   "/converter": {
     title: "แปลงสกุลเงิน อัตราแลกเปลี่ยนล่าสุด - Lofi Calculator",
