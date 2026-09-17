@@ -1,0 +1,5 @@
+# https://lofi-calculator.vercel.app
+User-agent: *
+Allow: /
+
+Sitemap: https://lofi-calculator.vercel.app/sitemap.xml
